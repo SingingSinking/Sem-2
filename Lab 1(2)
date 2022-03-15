@@ -1,0 +1,102 @@
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+
+using namespace std;
+const int n = 50;
+
+class strm {
+private:
+	char string[n];
+	int len;
+public:
+	void input1(fstream& f1)
+	{
+		char e;
+		e = f1.get();
+		int i = 0;
+		f1 << resetiosflags(ios::skipws);
+		while (!f1.eof() && string[i] != e && string[i] != '\n')
+		{
+			f1 >> string[i];
+			if (string[i] != e && string[i] != '\n')
+				i++;
+		}
+		len = i - 1;
+	}
+	void input2(fstream& f2)
+	{
+		f2 >> len;
+		len = min(max(len,0), n);
+		int i = 0;
+		f2 << setiosflags(ios::skipws);
+		while (!f2.eof() && i < len)
+		{
+			f2 >> string[i];
+			f2 << resetiosflags(ios::skipws);
+			if (string[i] == '\n' || f2.eof() || i == len)
+			{
+				break;
+			}
+			else i++;
+		}
+		len = i - 1;
+	}
+	bool findM() {
+		int res = 0, i = 0;
+		while (i < len) {
+			if (string[i] == '(')
+				res++;
+			else if (string[i] == ')')
+				res--;
+			i++;
+		}
+		return !res;
+	}
+	void output(fstream& f) {
+		int i = 0;
+		while (i <= len) {
+			f << string[i];
+			i++;
+		}
+	}
+};
+int main()
+{
+	fstream f1, f2, fout;
+	strm s;
+	int data;
+	setlocale(LC_ALL, "rus");
+	cout << "Лабораторная работа №1(часть 2), Гранин Владислав 1309 группа\n";
+	cout << "Введите номер теста: ";
+	cin >> data;
+	fout.open("output.txt", ios::out);
+	switch (data) {
+	case 1:
+		f1.open("input1.txt", ios::in);
+
+		if (f1.is_open()) {
+			cout << "fall open\n";
+			s.input1(f1);
+
+			f1.close();
+		}
+		else cout << "fall Error";
+		break;
+	case 2:
+		f2.open("input2.txt", ios::in);
+		if (f2.is_open()) {
+			cout << "fall open\n";
+			s.input2(f2);
+			f2.close();
+		}
+		else cout << "fall Error";
+		break;
+	}
+	s.output(fout);
+	fout << "\nРезультат работы:\nВо входных данных " << (s.findM() ? "обнаружено " : "не обнаружено ") <<
+		"равенство открывающих и закрывающих скобок.";
+
+	fout.close();
+	return 0;
+}
